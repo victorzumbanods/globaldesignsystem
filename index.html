@@ -275,7 +275,22 @@
   .slot::before{content:"";position:absolute;left:-17px;top:22px;width:17px;height:1px;background:color-mix(in srgb,currentColor 38%,transparent)}
   .cell .none{border:1px dashed var(--line2);border-radius:var(--r2);padding:13px 15px;color:var(--tx3);font-size:11.5px;line-height:1.6;position:relative}
   .cell .none::before{content:"";position:absolute;left:-17px;top:22px;width:17px;height:1px;background:color-mix(in srgb,currentColor 25%,transparent)}
-  @media (max-width:1400px){.rmatrix{grid-template-columns:140px repeat(3,minmax(220px,1fr));column-gap:22px}}
+  .bhd.mgr{border-bottom:0;padding-top:0}
+  .cell.mgr{grid-column:2/-1;border-bottom:0;padding:0;align-items:center}
+  .cell.mgr::before{display:none}
+  .cell.mgr .slot{width:min(100%,440px)}
+  .cell.mgr .slot::before{display:none}
+  .cell.mgr .slot::after{content:"";position:absolute;left:50%;top:100%;height:24px;width:1px;background:var(--line3)}
+  .bus{display:grid;grid-template-columns:repeat(3,1fr);column-gap:28px;width:100%;height:24px;margin-top:24px}
+  .bus i{position:relative;display:block}
+  .bus i::before{content:"";position:absolute;top:0;height:1px;background:var(--line3)}
+  .bus i:nth-child(1)::before{left:3px;right:-28px}
+  .bus i:nth-child(2)::before{left:-28px;right:-28px}
+  .bus i:nth-child(3)::before{left:-28px;right:calc(100% - 3px)}
+  .bus i::after{content:"";position:absolute;left:3px;top:0;bottom:0;width:1px;background:color-mix(in srgb,currentColor 38%,transparent)}
+  .thd{padding-top:14px}
+  .thd::before{content:"";position:absolute;left:3px;top:0;height:24px;width:1px;background:color-mix(in srgb,currentColor 38%,transparent)}
+  @media (max-width:1400px){.rmatrix{grid-template-columns:140px repeat(3,minmax(220px,1fr));column-gap:22px}.bus{column-gap:22px}.bus i:nth-child(1)::before{right:-22px}.bus i:nth-child(2)::before{left:-22px;right:-22px}.bus i:nth-child(3)::before{left:-22px}}
 
   .rc{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r2);padding:0;margin:0;cursor:pointer;overflow:hidden;position:relative;box-shadow:inset 0 1px 0 var(--hi);transition:border-color .15s,background .15s}
   .rc::before{content:"";position:absolute;left:0;top:0;bottom:0;width:2px;background:currentColor;opacity:.45;transition:opacity .15s}
@@ -405,25 +420,29 @@ const KINDS = {
 };
 
 const ROLES = [
+ // Management
+ {id:'r-dsmgr', area:'all', name:'Design System Manager', level:'Manager', summary:'The single accountable owner of the whole system across both axes: strategy, budget, headcount and the relationship with leadership. The leads of each team report here.', resp:['Strategy and yearly objectives of the system','Budget, headcount and vendor decisions','Executive alignment with Design and Engineering leadership','Arbitration between Product, Ops and regional priorities'], links:['ext-lider','i-roadmap','e1-resp'], collab:['r-dslead','r-opslead','r-uxlead']},
  // Product Design System
- {id:'r-dslead', area:'prod', name:'DS Lead / Product Owner', level:'Lead', summary:'Owns the Design System as a product: vision, roadmap, backlog and the quality bar. Final call on what enters the core.', resp:['Roadmap and backlog of the system','Prioritization with squads and regions','Quality bar: parity, accessibility, performance','Stakeholder alignment with Design and Engineering leadership'], links:['e1-resp','i-roadmap','c-prior','c-triagem'], collab:['r-opslead','r-pm']},
- {id:'r-sysdes', area:'prod', name:'System Designer', level:'Mid / Senior', summary:'Models and builds components in Figma — Core and Product — defining properties, variants and states based on the needs of each product axis.', resp:['Component modeling, variants and states','Library maintenance and Figma structure (with Tooling)','Pattern audits across products','Design critique and review of contributions'], links:['t-sys','e1-core','c-design','c-review','i-contrib'], collab:['r-uieng','r-content','r-proddes']},
+ {id:'r-dslead', area:'prod', name:'DS Lead', level:'Lead', summary:'Leads the Product Design System team: vision, roadmap, backlog and the quality bar of Global Shared. Final call on what enters Foundations and Core.', resp:['Roadmap and backlog of Global Shared','Prioritization with squads and regions','Quality bar: parity, accessibility, performance','Decides what is promoted into Core'], links:['e1-resp','i-roadmap','c-prior','c-triagem'], collab:['r-dsmgr','r-opslead','r-uxlead']},
+ {id:'r-sysdes', area:'prod', name:'System Designer', level:'Mid / Senior', summary:'Models and builds components in Figma — Core and Product — defining properties, variants and states based on the needs of each product axis.', resp:['Component modeling, variants and states','Library maintenance and Figma structure (with Tooling)','Pattern audits across products','Design critique and review of contributions'], links:['t-sys','e1-core','c-design','c-review','i-contrib'], collab:['r-uieng','r-pdds','r-content','r-proddes']},
  {id:'r-uieng', area:'prod', name:'UI Engineer (DS)', level:'Mid / Senior', summary:'Creates and maintains the code packages, manages tokens as variables and in the repository, and guarantees performance and accessibility.', resp:['Code packages, builds and semver releases','Token pipeline design → code','Storybook, visual and accessibility tests','Technical support to consuming developers'], links:['t-eng','e1-found','c-build','c-release','i-tokens'], collab:['r-sysdes','r-tooling','r-produi']},
+ {id:'r-pdds', area:'prod', name:'Product Designer · Design System', level:'Mid', seats:2, summary:'Two designers dedicated to the system. They model components and variants in Figma under the System Designer and turn regional requests into Foundations and Core proposals.', resp:['Component and variant modeling in Figma','Usage and state documentation with Content Design','Handling of component requests from the regions','Support to product designers adopting the system'], links:['t-sys','e1-core','e1-found','c-design','c-intake'], collab:['r-sysdes','r-uxlead','r-content']},
  {id:'r-content', area:'prod', name:'Content Designer', level:'Mid', summary:'Structures documentation and portals, usage rules, naming and complementary tooling such as the Icon System and plugins.', resp:['Portal and usage documentation','Naming and taxonomy','Content guidelines inside components','Icon System and plugins'], links:['t-content','c-docs','i-docs'], collab:['r-community','r-sysdes']},
  {id:'r-a11y', area:'prod', name:'Accessibility Specialist', level:'Mid · shared', summary:'Transversal role, dedicated or rotating: every delivery passes a WCAG 2.1 AA checklist, contrast tests and periodic audits.', resp:['Accessibility checklists per component','Contrast and assistive-tech tests','Periodic audits and remediation plan'], links:['t-a11y','c-qa','i-qa'], collab:['r-uieng','r-sysdes','r-data']},
  // Design Ops
- {id:'r-opslead', area:'ops', name:'DesignOps Lead', level:'Lead', summary:'Owns how the system is produced, delivered and adopted: governance, RACI, vision of the operation and relationship with leadership.', resp:['Contribution flow and governance','RACI between Product, Regional and squads','Decision log and versioning policy','Operational vision and stakeholder management'], links:['e2-gov','i-contrib','ext-lider','c-triagem'], collab:['r-dslead','r-pm']},
- {id:'r-pm', area:'ops', name:'DS Program Manager', level:'Mid / Senior', summary:'Runs the production cycle end to end: intake, rituals, capacity, roadmap tracking and delivery predictability.', resp:['Intake triage and Definition of Ready','Rituals: planning, review, retro','Roadmap tracking and capacity','Release process coordination'], links:['e2-plan','c-prior','i-roadmap','c-release','c-intake'], collab:['r-dslead','r-opslead','r-community']},
+ {id:'r-opslead', area:'ops', name:'DesignOps Lead', level:'Lead', summary:'Owns how the system is produced, delivered and adopted: governance, RACI, vision of the operation and relationship with leadership.', resp:['Contribution flow and governance','RACI between Product, Regional and squads','Decision log and versioning policy','Operational vision and stakeholder management'], links:['e2-gov','i-contrib','ext-lider','c-triagem'], collab:['r-dslead','r-po']},
+ {id:'r-po', area:'ops', name:'Senior Product Owner · Design Ops', level:'Senior', summary:'Owns the Design Ops backlog as a product: intake, prioritization, rituals and release coordination, so the operation delivers with predictability.', resp:['Backlog and intake triage with Definition of Ready','Prioritization with the leads and the regions','Rituals: planning, review, retro','Release coordination and roadmap tracking'], links:['e2-plan','c-prior','i-roadmap','c-release','c-intake'], collab:['r-opslead','r-dslead','r-community']},
  {id:'r-tooling', area:'ops', name:'Tooling & Automation Engineer', level:'Mid / Senior', summary:'Keeps the machinery running: Figma structure and permissions, token pipeline automation, CI, plugins and licenses.', resp:['Figma files, libraries, branches and permissions','Token pipeline automation (variables → repo)','CI, plugins and Figma ↔ code integrations','Licenses and access management'], links:['e2-tools','i-tokens','c-build','c-design'], collab:['r-uieng','r-sysdes']},
- {id:'r-community', area:'ops', name:'Community & Enablement Manager', level:'Mid', summary:'Makes deliveries known and used: release notes, office hours, onboarding, training and community rituals.', resp:['Changelog and release notes','Office hours and support channel','Onboarding tracks for designers and developers','Community and demo rituals'], links:['e2-com','c-comunica','c-adocao','i-onboard','i-docs'], collab:['r-content','r-pm']},
+ {id:'r-community', area:'ops', name:'Community & Enablement Manager', level:'Mid', summary:'Makes deliveries known and used: release notes, office hours, onboarding, training and community rituals.', resp:['Changelog and release notes','Office hours and support channel','Onboarding tracks for designers and developers','Community and demo rituals'], links:['e2-com','c-comunica','c-adocao','i-onboard','i-docs'], collab:['r-content','r-po']},
  {id:'r-data', area:'ops', name:'Data & Insights Analyst', level:'Mid', summary:'Measures whether the system is used and helping: adoption, coverage, detach rate, lead time, satisfaction and audits.', resp:['Adoption dashboard per product and platform','Coverage of components and tokens','Cycle lead time and throughput','Satisfaction survey and health score'], links:['e2-metrics','c-medicao','i-metrics','i-qa'], collab:['r-opslead','r-dslead','r-a11y']},
  // Product libraries
  {id:'r-proddes', area:'lib', name:'Product DS Designer (D2C / B2B)', level:'Mid', summary:'Builds product-specific compositions on top of Global Shared and proposes promotion of repeated patterns to the core.', resp:['Product compositions from Foundations + Core','Promotion proposals to the core (reuse in 2+ products)','Product library maintenance','Feedback to the core team'], links:['e1-product','lib-d2c','lib-b2b','c-triagem','c-intake'], collab:['r-sysdes','r-produi']},
  {id:'r-produi', area:'lib', name:'Product UI Engineer', level:'Mid', summary:'Implements product compositions consuming the DS packages; applies overrides only when justified and documented (e.g. VTEX).', resp:['Implementation of compositions in product code','Justified and documented overrides','Version upgrades of DS packages','Adoption reporting'], links:['e1-product','ext-eng','c-adocao'], collab:['r-uieng','r-proddes']},
- {id:'r-reglead', area:'lib', name:'Regional DS Lead (LAR / NAR)', level:'Senior', summary:'Aligns regional needs with the core, keeps regional specializations in sync and prevents forks.', resp:['Regional roadmap alignment','Sync of regional components with the core','Fork prevention and consolidation'], links:['ext-regional','i-contrib','lib-lar'], collab:['r-dslead','r-opslead']}
+ {id:'r-uxlead', area:'lib', name:'Regional UX Lead (LAR / NAR)', level:'Lead', summary:'Leads the product libraries for the region and is the single voice that requests new components from the Global team that owns Foundations and Core Components.', resp:['Requests and justifies new components to the Global team','Regional roadmap alignment with the core','Sync of regional compositions with Foundations and Core','Fork prevention and consolidation'], links:['ext-regional','i-contrib','lib-lar','c-intake','e1-shared'], collab:['r-dsmgr','r-dslead','r-proddes']}
 ];
-const AREA_LABEL = {prod:'Product Design System', ops:'Design Ops', lib:'Product libraries'};
-const AREA_SUB = {prod:'Builds and maintains Global Shared: Foundations and Core Components.', ops:'Operates around the whole cycle: process, tooling, communication, metrics, planning.', lib:'Compose product-specific UI (D2C, B2B, regional) consuming Global Shared.'};
+const roleNode = r => ({ id:r.id, name:r.name, kind:'roles', role:r, summary:r.summary, resp:r.resp, personas:r.collab.map(c=>ROLES.find(x=>x.id===c).name), links:r.links });
+const AREA_LABEL = {all:'Global Design System', prod:'Product Design System', ops:'Design Ops', lib:'Product libraries'};
+const AREA_SUB = {all:'One accountable owner across both axes.', prod:'Builds and maintains Global Shared: Foundations and Core Components.', ops:'Operates around the whole cycle: process, tooling, communication, metrics, planning.', lib:'Compose product-specific UI (D2C, B2B, regional) consuming Global Shared.'};
 
 const DATA = {
 id:'root', name:'Global Design System', kind:'root',
@@ -453,7 +472,7 @@ children:[
     children:[
     { id:'lib-d2c', name:'D2C library', kind:'lib', summary:'Direct-to-consumer compositions: ProductCard, Content Card, PLP and PDP pages, VTEX overrides where needed. Built from Foundations and Core.', resp:['Consumes tokens and core from Global Shared','ProductCard, Content Card, PLP / PDP','VTEX overrides, documented'], personas:['D2C squad designers and developers'], links:['e1-shared','ext-eng','r-proddes'] },
     { id:'lib-b2b', name:'B2B library', kind:'lib', summary:'Business compositions: order tables, quote cards, account switcher, bulk actions. Same Foundations and Core, different compositions.', resp:['Consumes tokens and core from Global Shared','Data-dense compositions (tables, filters, bulk actions)','Role and account patterns'], personas:['B2B squad designers and developers'], links:['e1-shared','r-proddes'] },
-    { id:'lib-lar', name:'One LAR · product-ui (LAR / NAR)', kind:'lib', summary:'Regional specialization for LAR / NAR: localized compositions and content, aligned with the core to avoid forks.', resp:['Regional compositions and localization','Sync with the core, no forks'], personas:['Regional DS team'], links:['e1-shared','ext-regional','r-reglead'] }
+    { id:'lib-lar', name:'One LAR · product-ui (LAR / NAR)', kind:'lib', summary:'Regional specialization for LAR / NAR: localized compositions and content, aligned with the core to avoid forks.', resp:['Regional compositions and localization','Sync with the core, no forks'], personas:['Regional DS team'], links:['e1-shared','ext-regional','r-uxlead'] }
     ]},
   { id:'e1-plat', name:'Platforms · Web, App, HMI', kind:'prod', summary:'Each platform consumes the same tokens and patterns with adaptations for ergonomics, input and performance.', resp:['Tokens per platform (theme)','Platform-specific interaction guidelines'], personas:['UI Engineering','Platform developers'], links:['ext-plat'] },
   { id:'e1-times', name:'Internal team', kind:'prod',
@@ -482,7 +501,7 @@ children:[
     { id:'e2-tools', name:'Tooling & Infrastructure', kind:'ops', summary:'Everything that makes the work flow: Figma libraries and branches, permissions, token pipeline, Storybook, plugins, automations and licenses.', resp:['Figma file and library structure','Token pipeline (variables → repository)','Figma ↔ code automations (plugins, CI)','Licenses and access management'], personas:['Tooling & Automation Engineer','UI Engineering (partner)'], links:['i-tokens','c-build','e1-found','r-tooling'] },
     { id:'e2-com', name:'Communication & Adoption', kind:'ops', summary:'Makes what was delivered known and used: release notes, changelog, office hours, onboarding, training and community.', resp:['Changelog and release notes','Office hours and support channel','Onboarding for designers and developers','Community and demo rituals'], personas:['Community & Enablement Manager','Content Designer (partner)'], links:['c-comunica','c-adocao','i-docs','i-onboard','r-community'] },
     { id:'e2-metrics', name:'Metrics & System Health', kind:'ops', summary:'Measures whether the system is used and helping: adoption, coverage, detach rate, component lead time, satisfaction and audits.', resp:['Adoption dashboard per product and platform','Coverage of components and tokens','Cycle lead time and throughput','Satisfaction survey and health score'], personas:['Data & Insights Analyst','DesignOps Lead'], links:['c-medicao','i-metrics','i-qa','r-data'] },
-    { id:'e2-plan', name:'Planning & Operations', kind:'ops', summary:'Roadmap, prioritization, rituals, team capacity, budget and stakeholder relationship.', resp:['Quarterly DS roadmap','Prioritization with squads and regions','Rituals (planning, review, retro)','Capacity and budget (licenses, tools)'], personas:['DS Program Manager','DesignOps Lead'], links:['c-prior','i-roadmap','ext-lider','r-pm'] }
+    { id:'e2-plan', name:'Planning & Operations', kind:'ops', summary:'Roadmap, prioritization, rituals, team capacity, budget and stakeholder relationship.', resp:['Quarterly DS roadmap','Prioritization with squads and regions','Rituals (planning, review, retro)','Capacity and budget (licenses, tools)'], personas:['DS Program Manager','DesignOps Lead'], links:['c-prior','i-roadmap','ext-lider','r-po'] }
     ]},
   { id:'e2-personas', name:'Personas served', kind:'ops', summary:'Who Design Ops serves: first the DS team, then leadership and consumers.', resp:['Serve the DS team first, then those who consume the DS'], personas:['DS team — Product and Regional (Axis 1)','Design and Engineering leadership','Product designers and developers','Regional teams and partners'], links:['e1','ext-lider'] }
   ]},
@@ -490,8 +509,8 @@ children:[
 { id:'roles', name:'Roles & responsibilities', kind:'roles',
   summary:'Job roles per area, each connected to the attributions it owns. In small teams one person covers two or three roles; the split describes responsibilities, not headcount.',
   resp:['Each role is accountable for the nodes it links to'], personas:['See each role'], links:['e1-times','e2-frentes','e1-product'],
-  children:['prod','ops','lib'].map(a => ({ id:'roles-'+a, name:AREA_LABEL[a]+' roles', kind:'roles', summary:AREA_SUB[a], resp:[], personas:ROLES.filter(r=>r.area===a).map(r=>r.name),
-    children:ROLES.filter(r=>r.area===a).map(r => ({ id:r.id, name:r.name, kind:'roles', role:r, summary:r.summary, resp:r.resp, personas:r.collab.map(c=>ROLES.find(x=>x.id===c).name), links:r.links })) }))
+  children:[...ROLES.filter(r=>r.area==='all').map(roleNode), ...['prod','ops','lib'].map(a => ({ id:'roles-'+a, name:AREA_LABEL[a]+' roles', kind:'roles', summary:AREA_SUB[a], resp:[], personas:ROLES.filter(r=>r.area===a).map(r=>r.name),
+    children:ROLES.filter(r=>r.area===a).map(roleNode) }))]
 },
 
 { id:'cycle', name:'Production cycle', kind:'cycle',
@@ -500,9 +519,9 @@ children:[
   children:[
   { id:'c-inicio', name:'Start · Discovery & Intake', kind:'cycle', summary:'How a need becomes a DS work item.', resp:['Axis 1: analyzes patterns and proposes a solution','Axis 2: intake, criteria, prioritization and SLA'], personas:['System Designer','DS Program Manager','DesignOps Lead'],
     children:[
-    { id:'c-intake', name:'Request (squad, regional, platform)', kind:'cycle', summary:'Entry through a single intake form or a proactive DS audit.', resp:['Axis 2: single form and channel','Axis 1: audit of repeated patterns'], personas:['Squads','Regional teams'], links:['e2-gov','ext-squads','r-pm'] },
+    { id:'c-intake', name:'Request (squad, regional, platform)', kind:'cycle', summary:'Entry through a single intake form or a proactive DS audit.', resp:['Axis 2: single form and channel','Axis 1: audit of repeated patterns'], personas:['Squads','Regional teams'], links:['e2-gov','ext-squads','r-po'] },
     { id:'c-triagem', name:'Triage · Core or Product?', kind:'cycle', summary:'Decide where the solution lives: global core, product library or regional override.', resp:['Axis 2: documented criteria','Axis 1: reuse analysis (2+ products → core)'], personas:['System Designer','DesignOps Lead'], links:['e2-gov','e1-product','i-contrib','r-dslead'] },
-    { id:'c-prior', name:'Prioritization & kickoff', kind:'cycle', summary:'Item enters the roadmap with an owner, scope and Definition of Ready.', resp:['Axis 2: prioritization matrix and DoR','Axis 1: estimate and allocation'], personas:['DS Program Manager','DS team'], links:['e2-plan','i-roadmap','r-pm'] }
+    { id:'c-prior', name:'Prioritization & kickoff', kind:'cycle', summary:'Item enters the roadmap with an owner, scope and Definition of Ready.', resp:['Axis 2: prioritization matrix and DoR','Axis 1: estimate and allocation'], personas:['DS Program Manager','DS team'], links:['e2-plan','i-roadmap','r-po'] }
     ]},
   { id:'c-meio', name:'Middle · Production', kind:'cycle', summary:'From Figma to code and documentation, with reviews at every hand-off.', resp:['Axis 1: design, build, QA, documentation','Axis 2: templates, checklists, DoD, tooling and tracking'], personas:['System Designer','UI Engineering','Content Designer','Tooling & Automation'],
     children:[
@@ -529,7 +548,7 @@ children:[
   { id:'i-tokens', name:'Token pipeline (design → code)', kind:'inter', summary:'Axis 2 builds and automates the pipeline; Axis 1 defines and maintains the tokens.', resp:['Axis 2: tooling and automation','Axis 1: source of truth and versioning'], personas:['Tooling & Automation','UI Engineering'], links:['e2-tools','t-eng','e1-found','r-tooling','r-uieng'] },
   { id:'i-docs', name:'Documentation & portal', kind:'inter', summary:'Axis 1 writes the content; Axis 2 maintains the portal, templates and distribution.', resp:['Axis 1: Content Designer','Axis 2: Communication & Adoption'], personas:['Content Designer','Community & Enablement'], links:['t-content','e2-com','c-docs','r-content','r-community'] },
   { id:'i-metrics', name:'Adoption metrics', kind:'inter', summary:'Axis 2 measures; Axis 1 acts on the result (backlog, deprecations, improvements).', resp:['Axis 2: dashboard and survey','Axis 1: prioritization of improvements'], personas:['Data & Insights','DS team'], links:['e2-metrics','c-medicao','r-data'] },
-  { id:'i-roadmap', name:'Roadmap & prioritization', kind:'inter', summary:'Axis 2 facilitates and aligns with stakeholders; Axis 1 estimates and executes.', resp:['Axis 2: facilitation, capacity, stakeholders','Axis 1: technical scope and effort'], personas:['DS Program Manager','DS team'], links:['e2-plan','e1-resp','c-prior','r-pm','r-dslead'] },
+  { id:'i-roadmap', name:'Roadmap & prioritization', kind:'inter', summary:'Axis 2 facilitates and aligns with stakeholders; Axis 1 estimates and executes.', resp:['Axis 2: facilitation, capacity, stakeholders','Axis 1: technical scope and effort'], personas:['DS Program Manager','DS team'], links:['e2-plan','e1-resp','c-prior','r-po','r-dslead'] },
   { id:'i-qa', name:'Quality & accessibility', kind:'inter', summary:'Axis 2 defines checklists and tooling; Axis 1 executes and fixes.', resp:['Axis 2: DoD, audits, test tooling','Axis 1: implementation and fixes'], personas:['Accessibility & Quality','UI Engineering'], links:['t-a11y','c-qa','e2-metrics','r-a11y'] },
   { id:'i-onboard', name:'Onboarding & community', kind:'inter', summary:'Axis 2 structures tracks and rituals; Axis 1 provides technical content and support.', resp:['Axis 2: track, office hours, community','Axis 1: content and technical answers'], personas:['Community & Enablement','DS team'], links:['e2-com','c-adocao','r-community'] }
   ]},
@@ -541,7 +560,7 @@ children:[
   { id:'ext-plat', name:'Platforms (Web, App, HMI)', kind:'ext', summary:'Each platform has its own constraints that influence tokens and components.', resp:['Validate feasibility per platform'], personas:['Platform developers'], links:['e1-plat','c-review'] },
   { id:'ext-eng', name:'Front-end engineering / VTEX', kind:'ext', summary:'Where packages are consumed and where overrides happen.', resp:['Consume supported versions','Report override needs'], personas:['Front-end developers','VTEX team'], links:['t-eng','e1-product','lib-d2c','r-produi'] },
   { id:'ext-lider', name:'Design & Engineering leadership', kind:'ext', summary:'Sponsors, sets strategic priorities and follows the metrics.', resp:['Sponsorship and capacity','Follow the health score'], personas:['Head of Design','Head of Engineering'], links:['e2-plan','e2-metrics','r-opslead','r-dslead'] },
-  { id:'ext-regional', name:'Regional teams (LAR / NAR)', kind:'ext', summary:'Specialize the system for the region and maintain local product components.', resp:['Sync with the core','Avoid forks'], personas:['Regional DS team'], links:['e1-product','i-contrib','lib-lar','r-reglead'] }
+  { id:'ext-regional', name:'Regional teams (LAR / NAR)', kind:'ext', summary:'Specialize the system for the region and maintain local product components.', resp:['Sync with the core','Avoid forks'], personas:['Regional DS team'], links:['e1-product','i-contrib','lib-lar','r-uxlead'] }
   ]}
 ]};
 
@@ -786,12 +805,13 @@ function drawArchArrows(){
    called Lead sits on top, Senior (incl. "Mid / Senior") in the middle, Mid at
    the base. Each column is drawn as an org spine in the team colour. */
 const BANDS = [
-  {k:'lead',   label:'Lead',   sub:'Owns direction, priorities and the quality bar.'},
-  {k:'senior', label:'Senior', sub:'Owns a discipline end to end and reviews the work of others.'},
-  {k:'mid',    label:'Mid',    sub:'Delivers, maintains and reports back to the discipline owner.'}
+  {k:'manager', label:'Manager', sub:'One accountable owner for the whole system, across both axes.'},
+  {k:'lead',    label:'Lead',    sub:'Owns direction, priorities and the quality bar of one team.'},
+  {k:'senior',  label:'Senior',  sub:'Owns a discipline end to end and reviews the work of others.'},
+  {k:'mid',     label:'Mid',     sub:'Delivers, maintains and reports back to the discipline owner.'}
 ];
-const bandOf = r => /lead/i.test(r.level) ? 'lead' : /senior/i.test(r.level) ? 'senior' : 'mid';
-const NO_LEAD = {lib:'No dedicated lead — direction comes from the DS Lead, regional alignment from the Regional DS Lead.'};
+const bandOf = r => /manager/i.test(r.level) ? 'manager' : /lead/i.test(r.level) ? 'lead' : /senior/i.test(r.level) ? 'senior' : 'mid';
+const NO_LEAD = {};
 function renderRoles(){
   const v = document.getElementById('rolesView');
   const areas = ['prod','ops','lib'];
@@ -799,7 +819,7 @@ function renderRoles(){
     <div class="slot"><div class="rc" data-go="${r.id}">
       <div class="rh">
         <h3>${r.name}</h3>
-        <span class="lvl">${r.level}</span>
+        <span class="lvl">${r.level}${r.seats ? ` · ${r.seats} seats` : ''}</span>
         <p>${r.summary}</p>
       </div>
       <div class="sect">
@@ -816,24 +836,27 @@ function renderRoles(){
     <div class="roles-head">
       <div>
         <h1>Roles</h1>
-        <p>Teams across, hierarchy down. Each column is one team's chain of ownership — from the lead who sets direction to the mid-level roles that deliver. Click any card or attribution to open its note.</p>
+        <p>One manager over the whole system, then teams across and hierarchy down. Each column is one team's chain of ownership, from the lead who sets direction to the roles that deliver. Click any card or attribution to open its note.</p>
       </div>
       <div class="roles-count">${ROLES.length} roles · ${areas.length} teams · ${BANDS.length} levels</div>
     </div>
     <div class="rmatrix">
+      ${(()=>{ const bd=BANDS[0], m=ROLES.filter(r=>bandOf(r)===bd.k); return `
+      <div class="bhd mgr"><h3>${bd.label}<em>${m.length}</em></h3><p>${bd.sub}</p></div>
+      <div class="cell mgr c-white">${m.map(card).join('')}<div class="bus">${areas.map(a=>`<i class="${KINDS[a].cls}"></i>`).join('')}</div></div>`; })()}
       <div class="corner"></div>
       ${areas.map(a => { const rs = ROLES.filter(r=>r.area===a); return `
       <div class="thd ${KINDS[a].cls}">
         <h2><i></i>${AREA_LABEL[a]}<em>${rs.length}</em></h2>
         <p class="sub">${AREA_SUB[a]}</p>
       </div>`; }).join('')}
-      ${BANDS.map((bd,bi) => `
+      ${BANDS.slice(1).map((bd,bi) => `
       <div class="bhd">
         <h3>${bd.label}<em>${ROLES.filter(r=>bandOf(r)===bd.k).length}</em></h3>
         <p>${bd.sub}</p>
       </div>
       ${areas.map(a => { const rs = ROLES.filter(r=>r.area===a && bandOf(r)===bd.k);
-        return `<div class="cell ${KINDS[a].cls} ${bi===BANDS.length-1?'last':''}">${rs.length ? rs.map(card).join('') : `<div class="none">${NO_LEAD[a] || '—'}</div>`}</div>`; }).join('')}`).join('')}
+        return `<div class="cell ${KINDS[a].cls} ${bi===BANDS.length-2?'last':''}">${rs.length ? rs.map(card).join('') : `<div class="none">${NO_LEAD[a] || '—'}</div>`}</div>`; }).join('')}`).join('')}
     </div>
   </div>`;
   v.querySelectorAll('[data-go]').forEach(el => el.addEventListener('click', e => { e.stopPropagation(); select(byId.get(el.dataset.go)); }));
@@ -852,7 +875,7 @@ function renderIntro(){
     {k:'tree',  cls:'c-purple', n:'Mind map',     t:'Structure',   d:'The whole system as a tree, one branch at a time. Focus presets isolate an axis, the production cycle or their intersections, and selecting a node reveals every connection it holds.'},
     {k:'graph', cls:'c-blue',   n:'Graph view',   t:'Network',     d:'Every node and every link in a single network. Hover to reveal a neighbourhood, drag to rearrange, and observe where the two axes meet most often.'},
     {k:'arch',  cls:'c-green',  n:'Architecture', t:'Layers',      d:'The layered picture. Design Ops surrounds the Global Design System, Global Shared holds the governed core, and the product libraries consume it for D2C, B2B and regional work.'},
-    {k:'roles', cls:'c-cyan',   n:'Roles',        t:'Ownership',   d:'Who owns what. Teams across and hierarchy down, from the leads who set direction to the roles that deliver, each tied to the nodes it is accountable for.'}
+    {k:'roles', cls:'c-cyan',   n:'Roles',        t:'Ownership',   d:'Who owns what. One manager over the whole system, then teams across and hierarchy down, from the leads who set direction to the roles that deliver, each tied to the nodes it is accountable for.'}
   ];
   const arrow = '<svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
   const links = allNodes.reduce((n,d)=>n+(d.data.links||[]).length,0);
